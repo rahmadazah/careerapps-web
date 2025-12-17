@@ -12,7 +12,7 @@ abstract class BaseApiService
     public function __construct()
     {
         $this->baseUrl = rtrim(
-            config('services.career_api.base_url'),
+            config('services.api.base_url'),
             '/'
         );
     }
