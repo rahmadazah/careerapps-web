@@ -5,18 +5,22 @@ namespace App\Models;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use App\Services\BaseApiService;
 use App\Helpers\FirebaseHelper;
 
-class Tes
+class Tes extends BaseApiService
 {
-    protected string $baseUrl = 'https://devskripsi.com/api/student/assessment';
+    // protected string $baseUrl = 'https://devskripsi.com/api/student/assessment';
 
     public function dapatkanSemua()
     {
         $token = Session::get('api_token');
         if (!$token) return null;
 
-        $response = Http::withToken($token)->get($this->baseUrl);
+        $response = $this->get('/student/assessment');
+        if (!$response || !$response->successful()) {
+            return null;
+        }
 
         if ($response->successful()) {
             $data = $response->json()['data'];
@@ -50,7 +54,10 @@ class Tes
         $token = Session::get('api_token');
         if (!$token) return null;
 
-        $response = Http::withToken($token)->get("{$this->baseUrl}/{$id}");
+        $response = $this->get('/student/assessment/'. $id);
+        if (!$response || !$response->successful()) {
+            return null;
+        }
 
         if ($response->successful()) {
             $data = $response->json()['data'];
@@ -83,7 +90,14 @@ class Tes
 
     public static function dapatkanPertanyaan($assessmentId, $token)
     {
-        $response = Http::withToken($token)->get("https://devskripsi.com/api/student/assessment/{$assessmentId}/question");
+        // $response = Http::withToken($token)->get("https://devskripsi.com/api/student/assessment/{$assessmentId}/question");
+
+        $response = Http::withToken($token)
+        ->get(config('services.api.base_url') . '/student/assessment/' . $assessmentId . '/question');
+
+        if (!$response || !$response->successful()) {
+            return null;
+        }
 
         if (!$response->successful()) {
             return [];
