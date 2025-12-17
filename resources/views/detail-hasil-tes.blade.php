@@ -3,6 +3,14 @@
 @section('title', $detailTes['title'])
 
 @section('content')
+
+@if(session('error'))
+    <div class="p-3 bg-red-200 text-red-800 rounded mb-3">
+        {{ session('error') }}
+    </div>
+@endif
+
+
 <div class="w-full flex flex-col items-start gap-2">
     <div class="flex flex-row gap-2 items-center mb-4">
         @if ($slug === 'tes-mbti')
