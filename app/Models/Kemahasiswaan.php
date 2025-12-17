@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use App\Helpers\FirebaseHelper;
+use App\Services\BaseApiService;
 use Carbon\Carbon;
 
-class Kemahasiswaan
+class Kemahasiswaan extends BaseApiService
 {
-    protected $baseUrl = 'https://devskripsi.com/api/student/detail';
+    // protected $baseUrl = 'https://devskripsi.com/api/student/detail';
     protected string $baseFirestore = 'https://firestore.googleapis.com/v1/projects/career-apps/databases/(default)/documents/kegiatan-kemahasiswaan';
 
     public function dapatkanData()
@@ -17,10 +18,10 @@ class Kemahasiswaan
         $token = Session::get('api_token');
         if (!$token) return null;
 
-        $response = Http::withToken($token)->get($this->baseUrl);
-        if (!$response->successful()){
+        $response = $this->get('/student/detail');
+        if (!$response || !$response->successful()) {
             return null;
-        } 
+        }
 
         $data = $response->json()['data'];
         if (!empty($data['Organization'])) {

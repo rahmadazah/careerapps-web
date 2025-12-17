@@ -5,18 +5,22 @@ namespace App\Models;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use App\Services\BaseApiService;
 use Carbon\Carbon;
 
-class Kegiatan
+class Kegiatan extends BaseApiService
 {
-    protected $baseUrl = 'https://devskripsi.com/api/student/activity';
+    // protected $baseUrl = 'https://devskripsi.com/api/student/activity';
 
     public function dapatkanSemua()
     {
         $token = Session::get('api_token');
         if (!$token) return null;
 
-        $response = Http::withToken($token)->get($this->baseUrl);
+        $response = $this->get('/student/activity');
+        if (!$response || !$response->successful()) {
+            return null;
+        }
 
         if ($response->successful()) {
             $data = $response->json()['data'];
@@ -32,12 +36,16 @@ class Kegiatan
         return [];
     }
 
-    public function dapatkanBerdasarkanId($id)
-    {
-        $token = Session::get('api_token');
-        if (!$token) return null;
+        public function dapatkanBerdasarkanId($id)
+        {
+            $token = Session::get('api_token');
+            if (!$token) return null;
 
-        $response = Http::withToken($token)->get("{$this->baseUrl}/{$id}");
+            $response = $this->get('/student/activity/'. $id);
+            if (!$response || !$response->successful()) {
+                return null;
+            }
+        // $response = Http::withToken($token)->get("{$this->baseUrl}/{$id}");
 
         if ($response->successful()) {
             $data = $response->json()['data'];

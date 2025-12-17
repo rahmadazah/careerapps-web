@@ -5,18 +5,23 @@ namespace App\Models;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use App\Services\BaseApiService;
 use Carbon\Carbon;
 
-class LowonganMagang
+class LowonganMagang extends BaseApiService
 {
-    protected $baseUrl = 'https://devskripsi.com/api/student/intern';
+    // protected $baseUrl = 'https://devskripsi.com/api/student/intern';
 
     public function dapatkanSemua()
     {
         $token = Session::get('api_token');
         if (!$token) return null;
 
-        $response = Http::withToken($token)->get($this->baseUrl);
+        $response = $this->get('/student/intern');
+        if (!$response || !$response->successful()) {
+            return null;
+        }
+
 
         if ($response->successful()) {
             $data = $response->json()['data'];
@@ -37,7 +42,10 @@ class LowonganMagang
         $token = Session::get('api_token');
         if (!$token) return null;
 
-        $response = Http::withToken($token)->get("{$this->baseUrl}/{$id}");
+        $response = $this->get('/student/intern' . $id);
+        if (!$response || !$response->successful()) {
+            return null;
+        }
 
         if ($response->successful()) {
             $data = $response->json()['data'];

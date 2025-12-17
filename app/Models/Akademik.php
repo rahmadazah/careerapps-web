@@ -6,22 +6,23 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use App\Services\BaseApiService;
 use Carbon\Carbon;
 
-class Akademik
+class Akademik extends BaseApiService
 {
-    protected $baseUrl = 'https://devskripsi.com/api/student/detail';
+    // protected $baseUrl = 'https://devskripsi.com/api/student/detail';
 
     public function dapatkanSemua()
     {
         $token = Session::get('api_token');
         if (!$token) return null;
 
-        $response = Http::withToken($token)->get($this->baseUrl);
-
-        if (!$response->successful()) {
+        $response = $this->get('/student/detail');
+        if (!$response || !$response->successful()) {
             return null;
         }
+
 
         $data = $response->json()['data'];
 
