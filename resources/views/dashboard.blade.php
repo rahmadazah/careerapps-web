@@ -73,7 +73,7 @@
             <div class="text-white text-4xl font-bold leading-tight">{{ $rekomendasiKarier ?? 'Belum ditentukan.' }}</div>
         </div>
     </div>
-    @if($rekomendasiKarier){
+    @if($rekomendasiKarier)
         <div class="w-full p-2 rounded-lg border border-gray-200 flex flex-col items-start gap-1">
             <div class="text-[#073B60] text-base font-bold leading-snug">Mengapa kamu cocok?</div>
             <div class="text-[#073B60] text-base font-normal leading-snug">
@@ -83,5 +83,5 @@
         <div class="w-full bg-[#F79B39] rounded-lg flex flex-col items-start p-2">
             <div class="text-white text-base font-bold leading-snug">Perhatian: <span class="font-normal">Hasil bisa saja kurang sesuai, pemetaan ini dihitung berdasarkan skor tes dan Capaian Pembelajaran Mata Kuliah yang sudah kamu ambil.</span></div>
         </div>
-    }
+    @endif
 @endsection
