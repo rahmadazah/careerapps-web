@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\LowonganKerja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class PengelolaLowonganKerja extends Controller
 {
@@ -74,12 +75,16 @@ class PengelolaLowonganKerja extends Controller
             return redirect()->route('masuk')->with('error', 'Silakan login dulu.');
         }
 
+        Log::info('Tampilkan detail lowongan, slug=' . $slug);
+
         $lowonganKerja = $this->lowonganKerja->dapatkanBerdasarkanSlug($slug);
 
         if ($lowonganKerja) {
+            Log::info('Lowongan ditemukan: ' . json_encode($lowonganKerja));
             return view('detail-kerja', compact('lowonganKerja'));
         }
 
+        Log::warning('Lowongan tidak ditemukan untuk slug=' . $slug);
         return redirect()->route('kerja')->with('error', 'Lowongan kerja tidak ditemukan.');
     }
 }
