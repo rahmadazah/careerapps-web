@@ -42,7 +42,7 @@
                 <img class="w-10 h-10" src="{{ asset('icons/mbti.png') }}" alt="MBTI"/>
                 <div class="flex-1 flex flex-col">
                     <div class="text-[#073B60] text-base font-medium">MBTI</div>
-                    <div class="text-[#073B60] text-2xl font-bold">{{ $hasilTes['mbti'] ?? '-' }}</div>
+                    <div class="text-[#073B60] text-2xl font-bold">{{ $hasilTes['mbti'] ?? 'Belum ditentukan.' }}</div>
                 </div>
                 <img class="w-10 h-10 ml-auto" src="{{ asset('icons/arrow.png') }}" alt=""/>
             </a>
@@ -51,7 +51,7 @@
                 <img class="w-10 h-10" src="{{ asset('icons/bakat.png') }}" alt="Preferensi Bakat"/>
                 <div class="flex-1 flex flex-col">
                     <div class="text-[#073B60] text-base font-medium">Preferensi Bakat</div>
-                    <div class="text-[#073B60] text-2xl font-bold">{{ $hasilTes['preferensiBakat'] ?? '-' }}</div>
+                    <div class="text-[#073B60] text-2xl font-bold">{{ $hasilTes['preferensiBakat'] ?? 'Belum ditentukan.' }}</div>
                 </div>
                 <img class="w-10 h-10 ml-auto" src="{{ asset('icons/arrow.png') }}" alt=""/>
             </a>
@@ -60,7 +60,7 @@
                 <img class="w-10 h-10" src="{{ asset('icons/kerja.png') }}" alt="Tipe Pekerjaan"/>
                 <div class="flex-1 flex flex-col">
                     <div class="text-[#073B60] text-base font-medium">Tipe Pekerjaan</div>
-                    <div class="text-[#073B60] text-2xl font-bold">{{ $hasilTes['tipePekerjaan'] ?? '-' }}</div>
+                    <div class="text-[#073B60] text-2xl font-bold">{{ $hasilTes['tipePekerjaan'] ?? 'Belum ditentukan.' }}</div>
                 </div>
                 <img class="w-10 h-10 ml-auto" src="{{ asset('icons/arrow.png') }}" alt=""/>
             </a>
@@ -70,16 +70,18 @@
     <div class="w-full bg-[#1080CF] rounded-lg flex items-center p-2">
         <div class="flex flex-col items-start">
             <div class="text-white text-base font-normal leading-snug">Kamu cocok menjadi</div>
-            <div class="text-white text-4xl font-bold leading-tight">{{ $rekomendasiKarier }}</div>
+            <div class="text-white text-4xl font-bold leading-tight">{{ $rekomendasiKarier ?? 'Belum ditentukan.' }}</div>
         </div>
     </div>
-    <div class="w-full p-2 rounded-lg border border-gray-200 flex flex-col items-start gap-1">
-        <div class="text-[#073B60] text-base font-bold leading-snug">Mengapa kamu cocok?</div>
-        <div class="text-[#073B60] text-base font-normal leading-snug">
-            Dari hasil tes yang telah dikerjakan, tipe pekerjaan yang paling dominan pada dirimu adalah <span class="font-bold">{{ $hasilTes['tipePekerjaan'] ?? '-' }}</span> dengan MBTI <span class="font-bold">{{ $hasilTes['mbti'] ?? '-' }}</span> dan memiliki preferensi bakat dominan <span class="font-bold">{{ $hasilTes['preferensiBakat'] ?? '-' }}</span>.
+    @if($rekomendasiKarier){
+        <div class="w-full p-2 rounded-lg border border-gray-200 flex flex-col items-start gap-1">
+            <div class="text-[#073B60] text-base font-bold leading-snug">Mengapa kamu cocok?</div>
+            <div class="text-[#073B60] text-base font-normal leading-snug">
+                Dari hasil tes yang telah dikerjakan, tipe pekerjaan yang paling dominan pada dirimu adalah <span class="font-bold">{{ $hasilTes['tipePekerjaan'] ?? '-' }}</span> dengan MBTI <span class="font-bold">{{ $hasilTes['mbti'] ?? '-' }}</span> dan memiliki preferensi bakat dominan <span class="font-bold">{{ $hasilTes['preferensiBakat'] ?? '-' }}</span>.
+            </div>
         </div>
-    </div>
-    <div class="w-full bg-[#F79B39] rounded-lg flex flex-col items-start p-2">
-        <div class="text-white text-base font-bold leading-snug">Perhatian: <span class="font-normal">Hasil bisa saja kurang sesuai, pemetaan ini dihitung berdasarkan skor tes dan Capaian Pembelajaran Mata Kuliah yang sudah kamu ambil.</span></div>
-    </div>
+        <div class="w-full bg-[#F79B39] rounded-lg flex flex-col items-start p-2">
+            <div class="text-white text-base font-bold leading-snug">Perhatian: <span class="font-normal">Hasil bisa saja kurang sesuai, pemetaan ini dihitung berdasarkan skor tes dan Capaian Pembelajaran Mata Kuliah yang sudah kamu ambil.</span></div>
+        </div>
+    }
 @endsection
