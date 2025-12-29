@@ -39,7 +39,7 @@
         @if($slug === 'tes-tipe-pekerjaan')
             <div class="gap-2">
                 <p class="text-2xl font-bold text-[#073B60]">{{ $hasilAkhir }}</p>
-                <p class="text-[#073B60]">Skor : {{ $skorUtama }}</p>
+                <p class="text-[#F79B39] font-bold">Skor : {{ $skorUtama }}</p>
             </div>
         @endif
         <p class="text-[#073B60] mt-2">{{ $penjelasanUtama }}</p>

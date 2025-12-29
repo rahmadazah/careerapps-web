@@ -10,8 +10,6 @@ use Carbon\Carbon;
 
 class LowonganKerja extends BaseApiService
 {
-    // protected $baseUrl = 'https://devskripsi.com/api/student/job';
-
     public function dapatkanSemua()
     {
         $token = Session::get('api_token');
@@ -41,7 +39,7 @@ class LowonganKerja extends BaseApiService
         $token = Session::get('api_token');
         if (!$token) return null;
 
-        $response = $this->get('/student/job' . $id);
+        $response = $this->get('/student/job/' . $id);
         if (!$response || !$response->successful()) {
             return null;
         }

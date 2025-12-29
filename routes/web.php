@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\PengelolaAkademik;
 use App\Http\Controllers\PengelolaAutentikasi;
-use App\Http\Controllers\PengelolaBakat;
 use App\Http\Controllers\PengelolaDashboard;
 use App\Http\Controllers\PengelolaHardskill;
 use App\Http\Controllers\PengelolaHasilTes;
@@ -15,13 +14,9 @@ use App\Http\Controllers\PengelolaKemahasiswaan;
 use App\Http\Controllers\PengelolaLowonganBeasiswa;
 use App\Http\Controllers\PengelolaLowonganKerja;
 use App\Http\Controllers\PengelolaLowonganMagang;
-use App\Http\Controllers\PengelolaMBTI;
-use App\Http\Controllers\PengelolaMKRekomendasi;
-use App\Http\Controllers\PengelolaMKRelevan;
 use App\Http\Controllers\PengelolaProfil;
 use App\Http\Controllers\PengelolaSoftskill;
 use App\Http\Controllers\PengelolaTes;
-use App\Http\Controllers\PengelolaTipekerja;
 
 Route::get('/', function () {
     return view('masuk');
@@ -53,7 +48,7 @@ Route::middleware(['web'])->group(function () {
     Route::post('/tes/{slug}/mulai', [PengelolaTes::class, 'mulaiTes'])->name('tes.mulai');
     Route::get('/tes/{slug}/soal/{nomor}', [PengelolaTes::class, 'tampilkanSoal'])->name('tes.soal');
     Route::post('/tes/simpan-jawaban', [PengelolaTes::class, 'simpanJawaban'])->name('tes.simpan');
-    Route::post('/tes/{slug}/selesaikan', [PengelolaTes::class, 'selesaikanTes'])->name('tes.selesaikan');
+    Route::get('/tes/{slug}/selesaikan', [PengelolaTes::class, 'selesaikanTes'])->name('tes.selesaikan');
     Route::get('/tes/{slug}/hasil', [PengelolaHasilTes::class, 'tampilkanHasilTes'])->name('tes.hasil');
     Route::get('/tes/{slug}/hasil/detail', [PengelolaHasilTes::class, 'tampilkanDetailHasilTes'])->name('tes.detail-hasil');
 

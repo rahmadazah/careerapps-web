@@ -70,21 +70,18 @@ class PengelolaLowonganKerja extends Controller
     }
 
     public function tampilkanDetail($slug)
-    {
-        if (!Session::has('api_token')) {
-            return redirect()->route('masuk')->with('error', 'Silakan login dulu.');
-        }
-
-        Log::info('Tampilkan detail lowongan, slug=' . $slug);
-
-        $lowonganKerja = $this->lowonganKerja->dapatkanBerdasarkanSlug($slug);
-
-        if ($lowonganKerja) {
-            Log::info('Lowongan ditemukan: ' . json_encode($lowonganKerja));
-            return view('detail-kerja', compact('lowonganKerja'));
-        }
-
-        Log::warning('Lowongan tidak ditemukan untuk slug=' . $slug);
-        return redirect()->route('kerja')->with('error', 'Lowongan kerja tidak ditemukan.');
+{
+    if (!Session::has('api_token')) {
+        return redirect()->route('masuk')->with('error', 'Silakan login dulu.');
     }
+
+    $lowonganKerja = $this->lowonganKerja->dapatkanBerdasarkanSlug($slug);
+
+    if ($lowonganKerja) {
+        return view('detail-kerja', compact('lowonganKerja'));
+    }
+
+    return redirect()->route('kerja')->with('error', 'Lowongan kerja tidak ditemukan.');
+}
+
 }

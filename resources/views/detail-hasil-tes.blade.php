@@ -10,7 +10,6 @@
     </div>
 @endif
 
-
 <div class="w-full flex flex-col items-start gap-2">
     <div class="flex flex-row gap-2 items-center mb-4">
         @if ($slug === 'tes-mbti')
@@ -55,46 +54,37 @@
         @endforeach
     </div>
 
-@elseif ($slug === 'tes-preferensi-bakat' && !empty($detail))
+@elseif (($slug === 'tes-preferensi-bakat' || $slug === 'tes-tipe-pekerjaan') && !empty($detail))
     <div class="w-full flex justify-center">
         <div class="w-1/2 max-w-sm">
-            <canvas id="bakatChart" class="w-full"></canvas>
+            <canvas id="{{ $slug === 'tes-preferensi-bakat' ? 'bakatChart' : 'kerjaChart' }}"></canvas>
         </div>
     </div>
 
-    <div class="w-full bg-[#F79B39] rounded-lg flex flex-col items-start gap-3 p-3">
-        <div class="text-white text-base font-bold leading-snug">Perhatian: <span class="font-normal">Semakin rendah nilai, semakin sesuai dengan preferensi bakatmu.</span></div>
+    <div class="w-full bg-[#F79B39] rounded-lg p-3 text-white">
+        {{ $slug === 'tes-preferensi-bakat'
+            ? 'Semakin rendah nilai, semakin sesuai dengan preferensi bakatmu.'
+            : 'Semakin tinggi nilai, semakin sesuai dengan tipe pekerjaanmu.' }}
     </div>
-    <div class="w-full flex flex-col items-start gap-4">
+
+    <div class="w-full flex flex-col gap-4">
         @foreach ($detail as $nama => $row)
-            <div class="w-full p-4 bg-white rounded-lg border border-gray-200 flex flex-col gap-1">
-                <div class="text-[#073B60] text-xl font-bold leading-tight">{{ $nama }}</div>
-                <div class="text-[#F79B39] text-sm font-medium leading-snug">Skor: {{ $row['skor'] }}</div>
-                <div class="text-[#073B60] text-base font-normal leading-snug">{{ $row['penjelasan'] }}</div>
+            <div class="w-full p-4 bg-white rounded-lg border border-gray-200">
+                <div class="text-[#073B60] text-xl font-bold">{{ $nama }}</div>
+                <div class="text-[#F79B39]">Skor: {{ $row['skor'] }}</div>
+                <div class="text-[#073B60]">{{ $row['penjelasan'] }}</div>
             </div>
         @endforeach
     </div>
 
-@elseif ($slug === 'tes-tipe-pekerjaan' && !empty($detail))
-    <div class="w-full flex justify-center">
-        <div class="w-1/2 max-w-sm">
-            <canvas id="kerjaChart" class="w-full"></canvas>
-        </div>
-    </div>
-    <div class="w-full bg-[#F79B39] rounded-lg flex flex-col items-start gap-3 p-3">
-        <div class="text-white text-base font-bold leading-snug">Perhatian: <span class="font-normal">Semakin tinggi nilai, semakin sesuai dengan tipe pekerjaanmu.</span></div>
-    </div>
-    <div class="w-full flex flex-col items-start gap-4">
-        @foreach ($detail as $nama => $row)
-            <div class="w-full p-4 bg-white rounded-lg border border-gray-200 flex flex-col gap-1">
-                <div class="text-[#073B60] text-xl font-bold leading-tight">{{ $nama }}</div>
-                <div class="text-[#F79B39] text-sm font-medium leading-snug">Skor: {{ $row['skor'] }}</div>
-                <div class="text-[#073B60] text-base font-normal leading-snug">{{ $row['penjelasan'] }}</div>
-            </div>
-        @endforeach
+@else
+    <div class="w-full bg-white text-center text-gray-500">
+        Kamu belum mengerjakan tes ini.
     </div>
 @endif
 
+
+@if (!empty($detail))
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const slug = "{{ $slug }}";
@@ -124,7 +114,6 @@
 
         chartType = "bar";
 
-        // Plugin label bar
         const labelInsideBar = {
             id: "labelInsideBar",
             afterDatasetsDraw(chart) {
@@ -149,11 +138,6 @@
         };
     @endif
 
-
-
-    // ============================
-    // 2) Preferensi Bakat / Tipe Pekerjaan (RADAR)
-    // ============================
     @if ($slug === 'tes-preferensi-bakat' || $slug === 'tes-tipe-pekerjaan')
         canvasId = "{{ $slug === 'tes-preferensi-bakat' ? 'bakatChart' : 'kerjaChart' }}";
 
@@ -173,12 +157,6 @@
         chartType = "radar";
     @endif
 
-
-
-
-    // ============================
-    // RENDER CHART
-    // ============================
     if (canvasId) {
         const ctx = document.getElementById(canvasId).getContext("2d");
 
@@ -199,7 +177,6 @@
             },
         };
 
-        // Tambah plugin cuma untuk MBTI
         if (slug === "tes-mbti") {
             chartConfig.plugins = [labelInsideBar];
             chartConfig.options.indexAxis = "y";
@@ -209,7 +186,5 @@
     }
 </script>
 
-
-
-
+@endif
 @endsection

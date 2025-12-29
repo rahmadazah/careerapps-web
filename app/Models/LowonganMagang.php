@@ -42,7 +42,7 @@ class LowonganMagang extends BaseApiService
         $token = Session::get('api_token');
         if (!$token) return null;
 
-        $response = $this->get('/student/intern' . $id);
+        $response = $this->get('/student/intern/' . $id);
         if (!$response || !$response->successful()) {
             return null;
         }

@@ -156,7 +156,7 @@ class PengelolaHasilTes extends Controller
             'detailTes' => $detailTes,
             'hasilAkhir' => $hasilAkhir,
             'skor' => $skor,
-            'skorUtama' => $skorUtama,
+            'skorUtama' => $skorUtama ?? null,
             'mbtiMapping' => $mbtiMapping,
             'penjelasan' => $penjelasan,
             'penjelasanUtama' => $penjelasanUtama,

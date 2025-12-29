@@ -8,7 +8,7 @@ use App\Models\Tes;
 use App\Models\HasilTes;
 use Carbon\Carbon;
 
-class PengelolaTes extends Controller
+class   PengelolaTes extends Controller
 { 
     protected $tes;
 
@@ -89,7 +89,6 @@ class PengelolaTes extends Controller
             'penjelasan' => $penjelasan,
             'slug' => $slug,
         ]);
-
     }
 
     public function tampilkanPersetujuanPengguna($slug)
@@ -293,7 +292,8 @@ class PengelolaTes extends Controller
         $studentId = Session::get('student_id');
 
         if (empty($jawaban)) {
-            return redirect()->route('tes.soal', ['slug' => $slug, 'nomor' => 1])
+            return redirect()
+                ->route('tes.soal', ['slug' => $slug, 'nomor' => 1])
                 ->with('error', 'Kamu belum mengisi tes.');
         }
 
@@ -301,18 +301,25 @@ class PengelolaTes extends Controller
             case 'tes-mbti':
                 $hasil = HasilTes::hitungMBTI($jawaban);
                 break;
+
             case 'tes-preferensi-bakat':
                 $hasil = HasilTes::hitungPreferensiBakat($jawaban);
                 break;
+
             case 'tes-tipe-pekerjaan':
                 $hasil = HasilTes::hitungTipeKerja($jawaban);
                 break;
+
             default:
-                return redirect()->route('tes.daftar')->with('error', 'Jenis tes tidak valid.');
+                return redirect()
+                    ->route('tes.daftar')
+                    ->with('error', 'Jenis tes tidak valid.');
         }
 
         HasilTes::simpanHasil($studentId, $slug, [
-            'hasil_akhir' => $hasil['kategori_terbawah'] ?? $hasil['kategori_teratas'] ?? $hasil['tipe_teratas'],
+            'hasil_akhir' => $hasil['kategori_terbawah']
+                ?? $hasil['kategori_teratas']
+                ?? $hasil['tipe_teratas'],
             'detail_skor' => $hasil['skor'] ?? [],
             'jawaban' => $jawaban,
         ]);
@@ -320,36 +327,45 @@ class PengelolaTes extends Controller
         $nim = Session::get('student_nim');
         $assessmentId = Session::get('assessment_id');
 
-        $prediksi = HasilTes::kirimUntukPrediksi($studentId, $nim, $assessmentId);
+        $prediksi = HasilTes::kirimUntukPrediksi(
+            $studentId,
+            $nim,
+            $assessmentId
+        );
 
-        if (!$prediksi) {
-            return back()->with('error', 'Prediksi gagal.');
+        if ($prediksi) {
+            $mbti = HasilTes::where('student_id', $studentId)
+                ->where('tes_slug', 'tes-mbti')
+                ->latest()
+                ->value('hasil_akhir');
+
+            $careerId = data_get($prediksi, 'api response.data.id');
+            $top3 = data_get($prediksi, 'top_3_riasec', []);
+            $bottom2 = data_get($prediksi, 'bottom_2_mi', []);
+
+            HasilTes::kirimUntukRekomendasi(
+                $nim,
+                $assessmentId,
+                $careerId,
+                $mbti,
+                $top3,
+                $bottom2
+            );
         }
 
-        Session::put('prediksi', $prediksi);
+        Session::forget([
+            'jawaban',
+            'pertanyaan_tes',
+            'waktu_mulai_tes',
+            'durasi_tes',
+            'soal_sekarang',
+            'nama_tes',
+            'assessment_id',
+        ]);
 
-        $mbti = HasilTes::where('student_id', $studentId)
-                    ->where('tes_slug', 'tes-mbti')
-                    ->latest()
-                    ->first()
-                    ->hasil_akhir ?? null;
-
-        $careerid = data_get($prediksi, 'api response.data.id');
-        $top3 = data_get($prediksi, 'top_3_riasec', []);
-        $bottom2 = data_get($prediksi, 'bottom_2_mi', []);
-
-        $rekomendasi = HasilTes::kirimUntukRekomendasi(
-            $nim,
-            $assessmentId,
-            $careerid,
-            $mbti,
-            $top3,
-            $bottom2
-        );
-        
-        Session::forget(['jawaban', 'pertanyaan_tes', 'waktu_mulai_tes', 'durasi_tes', 'soal_sekarang', 'nama_tes', 'assessment_id', 'prediksi']);
-
-        return redirect()->route('tes.hasil', ['slug' => $slug])
+        return redirect()
+            ->route('tes.hasil', ['slug' => $slug])
             ->with('success', 'Tes berhasil diselesaikan!');
     }
+
 }

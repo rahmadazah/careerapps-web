@@ -9,7 +9,7 @@ use App\Helpers\FirebaseHelper;
 
 class MataKuliah
 {
-    protected string $baseUrl = 'https://devskripsi.com/api/student';
+    protected string $baseUrl = 'https://devskripsi.com/api/student'; 
     protected string $baseFirestore = 'https://firestore.googleapis.com/v1/projects/career-apps/databases/(default)/documents';
 
     public function dapatkanMKRelevan()

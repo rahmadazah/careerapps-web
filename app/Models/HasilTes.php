@@ -32,21 +32,21 @@ class HasilTes extends Model
         $konfigurasiDimensi = [
             "E/I" => ["E", "I"],
             "N/S" => ["N", "S"],
-            "T/F" => ["T", "F"],
+            "F/T" => ["F", "T"],
             "J/P" => ["J", "P"],
         ];
 
         $jumlahDimensi = [
             "E" => 0, "I" => 0,
             "N" => 0, "S" => 0,
-            "T" => 0, "F" => 0,
+            "F" => 0, "T" => 0,
             "J" => 0, "P" => 0,
         ];
 
         $rentangDimensi = [
             ["E/I", range(1, 7)],  
             ["N/S", range(8, 14)], 
-            ["T/F", range(15, 21)],
+            ["F/T", range(15, 21)],
             ["J/P", range(22, 28)],
         ];
 
@@ -179,8 +179,9 @@ class HasilTes extends Model
 
     public static function dapatkanHasilTes()
     {
-        $token = Session::get('api_token');
-        if (!$token) {
+        $studentId = Session::get('student_id');
+
+        if (!$studentId) {
             return [
                 'mbti' => null,
                 'preferensiBakat' => null,
@@ -188,12 +189,32 @@ class HasilTes extends Model
             ];
         }
 
-        $response = Http::withToken($token)->get(self::$baseUrl . '/test');
-        $hasilTes = collect($response->json('data') ?? []);
+        $mbti = self::where('student_id', $studentId)
+            ->where('tes_slug', 'tes-mbti')
+            ->latest()
+            ->value('hasil_akhir');
 
-        $mbti = optional($hasilTes->firstWhere('testMBTI'))['testMBTI'] ?? null;
-        $preferensiBakat = optional($hasilTes->firstWhere('testPotential1'))['testPotential1'] ?? null;
-        $tipePekerjaan = optional($hasilTes->firstWhere('testJobType1'))['testJobType1'] ?? null;
+        $preferensi = self::where('student_id', $studentId)
+            ->where('tes_slug', 'tes-preferensi-bakat')
+            ->latest()
+            ->first();
+
+        $preferensiBakat = null;
+        if ($preferensi && is_array($preferensi->detail_skor)) {
+            $minValue = min($preferensi->detail_skor);
+            $preferensiBakat = array_search($minValue, $preferensi->detail_skor);
+        }
+
+        $tipe = self::where('student_id', $studentId)
+            ->where('tes_slug', 'tes-tipe-pekerjaan')
+            ->latest()
+            ->first();
+
+        $tipePekerjaan = null;
+        if ($tipe && is_array($tipe->detail_skor)) {
+            $maxValue = max($tipe->detail_skor);
+            $tipePekerjaan = array_search($maxValue, $tipe->detail_skor);
+        }
 
         return [
             'mbti' => $mbti,
@@ -230,15 +251,16 @@ class HasilTes extends Model
     {
         $all = self::dapatkanSemuaPenjelasan($slug);
 
-        if (!$all) {
+        if (!$all || !$hasilAkhir) {
             return null;
         }
 
-        $key = strtolower(trim($hasilAkhir));
+        $key = strtolower(
+            str_replace([' ', '/', '_'], '-', trim($hasilAkhir))
+        );
 
         return $all[$key] ?? null;
     }
-
 
     public static function dapatkanSemuaPenjelasan($slug)
     {
@@ -271,10 +293,9 @@ class HasilTes extends Model
                 $parsed[strtolower($key)] = reset($value);
             }
 
-            return $parsed; // seluruh penjelasan
+            return $parsed;
         }
 
-        // fallback
         return $data;
     }
 
