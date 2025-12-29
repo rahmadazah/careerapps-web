@@ -6,16 +6,20 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use App\Helpers\FirebaseHelper;
+use App\Services\BaseApiService;
+use App\Models\Mahasiswa;
 
-class MataKuliah
+class MataKuliah extends BaseApiService
 {
-    protected string $baseUrl = 'https://devskripsi.com/api/student'; 
+    // protected string $baseUrl = 'https://devskripsi.com/api/student'; 
     protected string $baseFirestore = 'https://firestore.googleapis.com/v1/projects/career-apps/databases/(default)/documents';
 
     public function dapatkanMKRelevan()
     {
         $token = Session::get('api_token');
-        $response = Http::withToken($token)->get("{$this->baseUrl}/detail");
+        if (!$token) return null;
+
+        $response = $this->get('/student/detail/');
 
         if (!$response->successful()) {
             return collect();
@@ -54,43 +58,57 @@ class MataKuliah
         $token = Session::get('api_token');
         if (!$token) return null;
 
-        $responseDetail = Http::withToken($token)->get("{$this->baseUrl}/detail");
-       
-        if (!$responseDetail->successful()) return null;
+        $response = $this->get('/student/detail');
 
-        $krsData = $responseDetail->json()['data']['Academic'][0]['KRS'] ?? [];
+        $namaMK = Str::headline(str_replace('-', ' ', $slug));
+        $grade = '-';
 
-        $foundMK = collect($krsData)->flatMap(fn($krs) => $krs['CourseTaken'] ?? [])
-            ->map(fn($item) => [
-                'slug' => Str::slug($item['course']['name'] ?? ''),
-                'name' => $item['course']['name'] ?? '-',
-                'grade' => strtoupper(str_replace(['_plus', '_minus'], ['+', '-'], $item['grade'] ?? '-'))
-            ])
-            ->firstWhere('slug', $slug);
+        if ($response->successful()) {
+            $krsData = $response->json()['data']['Academic'][0]['KRS'] ?? [];
 
-        if (!$foundMK) return null;
+            $foundMK = collect($krsData)
+                ->flatMap(fn ($krs) => $krs['CourseTaken'] ?? [])
+                ->map(fn ($item) => [
+                    'slug' => Str::slug($item['course']['name'] ?? ''),
+                    'name' => $item['course']['name'] ?? '-',
+                    'grade' => strtoupper(
+                        str_replace(['_plus', '_minus'], ['+', '-'], $item['grade'] ?? '-')
+                    )
+                ])
+                ->firstWhere('slug', $slug);
 
-        $namaMK = $foundMK['name'];
-        $grade = $foundMK['grade'];
+            if ($foundMK) {
+                $namaMK = $foundMK['name'];
+                $grade = $foundMK['grade'];
+            }
+        }
 
-        $responseKarier = Http::withToken($token)->get("{$this->baseUrl}/career");
-        $dataKarier = collect($responseKarier->json()['data'] ?? []);
-        $rekomendasiKarier = $dataKarier->first()['careerPrediction'] ?? null;
-
+        $rekomendasiKarier = Mahasiswa::ambilRekomendasiKarier();
+        
         $accessToken = FirebaseHelper::getAccessToken();
 
         $firebaseURL = "{$this->baseFirestore}/mata-kuliah/kurikulum-2020/tif-2020-wajib/{$slug}";
-        $response = Http::withToken($accessToken)->get($firebaseURL);
+        $responseFirebase = Http::withToken($accessToken)->get($firebaseURL);
 
-        if (!$response->successful()) {
+        if (!$responseFirebase->successful()) {
             $stream = $this->pemetaanMK($rekomendasiKarier);
-            $firebaseURL = "{$this->baseFirestore}/{$stream}/{$slug}";
-            $response = Http::withToken($accessToken)->get($firebaseURL);
+            if ($stream) {
+                $firebaseURL = "{$this->baseFirestore}/{$stream}/{$slug}";
+                $responseFirebase = Http::withToken($accessToken)->get($firebaseURL);
+            }
         }
 
-        if (!$response->successful()) return null;
+        if (!$responseFirebase->successful()) {
+            return [
+                'nama' => $namaMK,
+                'grade' => $grade,
+                'deskripsi' => '',
+                'cpmk' => '',
+                'subcpmk' => '',
+            ];
+        }
 
-        $fields = $response->json()['fields'] ?? [];
+        $fields = $responseFirebase->json()['fields'] ?? [];
 
         return [
             'nama' => $namaMK,
@@ -103,23 +121,20 @@ class MataKuliah
 
     public function dapatkanMKRekomendasi()
     {
-        $token = Session::get('api_token');
-        $response = Http::withToken($token)->get("{$this->baseUrl}/career");
+        $rekomendasiKarier = Mahasiswa::ambilRekomendasiKarier();
         
-        $dataKarier = collect($response->json()['data'] ?? []);
-        $karier = $dataKarier->first()['careerPrediction'] ?? null;
-        
-        $streamPath = $this->pemetaanMK($karier);
-        
+        $streamPath = $this->pemetaanMK($rekomendasiKarier);
+
         $accessToken = FirebaseHelper::getAccessToken();
-        $response = Http::withToken($accessToken)->get("{$this->baseFirestore}/{$streamPath}");
+        $response = Http::withToken($accessToken)
+            ->get("{$this->baseFirestore}/{$streamPath}");
 
         $documents = $response->json()['documents'] ?? [];
 
         return collect($documents)->map(function ($doc) {
             $fields = $doc['fields'] ?? [];
-            
             $docId = basename($doc['name']);
+
             return [
                 'nama' => $fields['nama-matkul']['stringValue'] ?? '-',
                 'slug' => $docId,
@@ -129,15 +144,12 @@ class MataKuliah
         });
     }
 
+
     public function dapatkanDetailMKRekomendasi($slug)
     {
-        $token = Session::get('api_token');
-        $response = Http::withToken($token)->get("{$this->baseUrl}/career");
-
-        $dataKarier = collect($response->json()['data'] ?? []);
-        $karier = $dataKarier->first()['careerPrediction'] ?? null;
-
-        $streamPath = $this->pemetaanMK($karier);
+        $rekomendasiKarier = Mahasiswa::ambilRekomendasiKarier();
+        
+        $streamPath = $this->pemetaanMK($rekomendasiKarier);
         $accessToken = FirebaseHelper::getAccessToken();
 
         $url = "{$this->baseFirestore}/{$streamPath}/{$slug}";

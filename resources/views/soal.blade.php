@@ -6,7 +6,7 @@
 <div class="flex flex-col lg:flex-row gap-6">
 
     {{-- ================= SIDEBAR ================= --}}
-    <div class="w-full lg:w-1/4 bg-white rounded-2xl p-6 shadow-md flex flex-col items-center gap-4">
+    <div class="w-full lg:w-1/4 bg-white rounded-2xl border border-gray-200 p-4 flex flex-col items-center gap-4">
 
         <div id="timer"
             class="bg-[#FF9300] text-white text-lg font-bold px-6 py-2 rounded-xl text-center w-full">
@@ -39,7 +39,7 @@
     </div>
 
     {{-- ================= KONTEN SOAL ================= --}}
-    <div class="flex-1 bg-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
+    <div class="flex-1 bg-white flex flex-col justify-between">
 
         {{-- SATU-SATUNYA FORM --}}
         <form id="formTes" action="{{ route('tes.simpan') }}" method="POST">
