@@ -97,17 +97,22 @@ class HasilTes extends Model
 
         $nilaiKategori = array_fill_keys(array_keys($kategori), 0);
 
-        foreach ($jawaban as $index => $value) {
+        foreach ($jawaban as $nomorSoal => $value) {
             if (empty($value)) continue;
 
-            $nomorSoal = $index + 1;
+            $jawabanDipilih = strtolower(trim($value));
 
             foreach ($kategori as $namaKategori => $soalKategori) {
-                if (in_array($nomorSoal, $soalKategori)) {
-                    $jawabanDipilih = strtolower(trim($value));
-                    if ($jawabanDipilih === 'a') $nilaiKategori[$namaKategori] += 1;
-                    elseif ($jawabanDipilih === 'b') $nilaiKategori[$namaKategori] += 2;
-                    elseif ($jawabanDipilih === 'c') $nilaiKategori[$namaKategori] += 3;
+                if (in_array((int)$nomorSoal, $soalKategori, true)) {
+
+                    if ($jawabanDipilih === 'a') {
+                        $nilaiKategori[$namaKategori] += 1;
+                    } elseif ($jawabanDipilih === 'b') {
+                        $nilaiKategori[$namaKategori] += 2;
+                    } elseif ($jawabanDipilih === 'c') {
+                        $nilaiKategori[$namaKategori] += 3;
+                    }
+
                     break;
                 }
             }

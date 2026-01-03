@@ -30,10 +30,9 @@ class PengelolaLowonganMagang extends Controller
 
         if (!$daftarLowonganMagang) {
             return view('daftar-lowongan-magang', [
-                'daftarLowonganMagang' => [],
-                'error' => 'Gagal mengambil data dari API.',
+                'daftarLowonganMagang' => collect(),
                 'filterRemote' => $filterRemote,
-                'search' => $search,
+                'search' => $search ?? '',
                 'currentPage' => 1,
                 'totalPages' => 1
             ]);

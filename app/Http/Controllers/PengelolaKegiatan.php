@@ -30,8 +30,11 @@ class PengelolaKegiatan extends Controller
 
         if (!$daftarKegiatan) {
             return view('daftar-kegiatan', [
-                'daftarKegiatan' => [],
-                'error' => 'Gagal mengambil data dari API.'
+                'daftarKegiatan' => collect(),
+                'filterType' => $filterType,
+                'search' => $search ?? '',
+                'currentPage' => 1,
+                'totalPages' => 1
             ]);
         }
 
@@ -66,7 +69,6 @@ class PengelolaKegiatan extends Controller
             'totalPages' => $totalPages,
         ]);
     }
-
 
     public function tampilkanDetail($slug)
     {

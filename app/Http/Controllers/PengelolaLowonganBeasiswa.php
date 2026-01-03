@@ -29,8 +29,10 @@ class PengelolaLowonganBeasiswa extends Controller
 
         if (!$daftarLowonganBeasiswa) {
             return view('daftar-lowongan-beasiswa', [
-                'daftarLowonganBeasiswa' => [],
-                'error' => 'Gagal mengambil data dari API.'
+                'daftarLowonganBeasiswa' => collect(),
+                'search' => $search ?? '',
+                'currentPage' => 1,
+                'totalPages' => 1,
             ]);
         }
 
@@ -56,7 +58,7 @@ class PengelolaLowonganBeasiswa extends Controller
 
         return view('daftar-lowongan-beasiswa', [
             'daftarLowonganBeasiswa' => $paginatedData,
-            'search' => $search,
+            'search' => $search ?? '',
             'currentPage' => $page,
             'totalPages' => $totalPages,
         ]);

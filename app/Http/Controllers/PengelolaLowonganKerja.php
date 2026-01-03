@@ -31,8 +31,11 @@ class PengelolaLowonganKerja extends Controller
 
         if (!$daftarLowonganKerja) {
             return view('daftar-lowongan-kerja', [
-                'daftarLowonganKerja' => [],
-                'error' => 'Gagal mengambil data dari API.'
+                'daftarLowonganKerja' => collect(),
+                'status' => $status,
+                'search' => $search ?? '',
+                'currentPage' => 1,
+                'totalPages' => 1,
             ]);
         }
 
