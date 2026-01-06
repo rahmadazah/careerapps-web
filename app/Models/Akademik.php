@@ -40,14 +40,14 @@ class Akademik extends BaseApiService
         $kumpulanPKL = collect($data['Pkl'] ?? [])->map(function ($item) {
             $item['dateStart'] = Carbon::parse($item['dateStart'])->translatedFormat('d F Y');
             $item['dateEnd'] = Carbon::parse($item['dateEnd'])->translatedFormat('d F Y');
-            $item['status'] = Carbon::now()->gt(Carbon::parse($item['dateEnd'])) ? 'Selesai' : 'Sedang Berlangsung';
+            $item['status'] = Carbon::now()->gt(Carbon::parse($item['dateEnd'])) ? 'Sedang Berlangsung' : 'Selesai';
             return $item;
         });
 
         $kumpulanKKN = collect($data['KKN'] ?? [])->map(function ($item) {
             $item['startDate'] = Carbon::parse($item['startDate'])->translatedFormat('d F Y');
             $item['endDate'] = Carbon::parse($item['endDate'])->translatedFormat('d F Y');
-            $item['status'] = Carbon::now()->gt(Carbon::parse($item['endDate'])) ? 'Selesai' : 'Sedang Berlangsung';
+            $item['status'] = Carbon::now()->gt(Carbon::parse($item['endDate'])) ? 'Sedang Berlangsung' : 'Selesai';
             return $item;
         });
 
