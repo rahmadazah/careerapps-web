@@ -5,7 +5,6 @@
 @section('content')
 <div class="flex flex-col lg:flex-row gap-6">
 
-    {{-- ================= SIDEBAR ================= --}}
     <div class="w-full lg:w-1/4 bg-white rounded-2xl border border-gray-200 p-4 flex flex-col items-center gap-4">
 
         <div id="timer"
@@ -28,7 +27,6 @@
             @endforeach
         </div>
 
-        {{-- TOMBOL SELESAI (SIDEBAR, BUKAN FORM) --}}
         @if ($nomor == count($pertanyaanList))
             <button type="button" id="btnConfirmFinish"
                 class="bg-[#1080CF] text-white font-bold px-6 py-2 rounded-xl w-full mt-4">
@@ -38,10 +36,8 @@
 
     </div>
 
-    {{-- ================= KONTEN SOAL ================= --}}
     <div class="flex-1 bg-white flex flex-col justify-between">
 
-        {{-- SATU-SATUNYA FORM --}}
         <form id="formTes" action="{{ route('tes.simpan') }}" method="POST">
             @csrf
             <input type="hidden" name="nomor" value="{{ $nomor }}">
@@ -76,7 +72,6 @@
                 @endforeach
             </div>
 
-            {{-- NAVIGASI --}}
             <div class="flex justify-between mt-8">
                 @if ($nomor > 1)
                     <button type="submit" name="sebelumnya"
@@ -99,7 +94,6 @@
     </div>
 </div>
 
-{{-- ================= MODAL KONFIRMASI ================= --}}
 <div id="confirmModal"
      class="fixed inset-0 bg-black/40 hidden flex items-center justify-center z-50">
 
@@ -115,7 +109,6 @@
                 Batal
             </button>
 
-            {{-- INI YANG PENTING --}}
             <button
                 type="submit"
                 name="selesai"
@@ -128,7 +121,6 @@
 </div>
 
 <script>
-    // ===== TIMER =====
     let sisaDetik = Math.floor({{ $sisaDetik }});
     const timer = document.getElementById('timer');
 
@@ -152,7 +144,6 @@
 
     setInterval(updateTimer, 1000);
 
-    // ===== MODAL =====
     document.getElementById('btnConfirmFinish')?.addEventListener('click', () => {
         document.getElementById('confirmModal').classList.remove('hidden');
     });

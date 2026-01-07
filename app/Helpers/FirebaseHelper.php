@@ -50,7 +50,7 @@ class FirebaseHelper
     {
         $token = self::getAccessToken();
 
-        $projectId = 'career-apps'; // Ganti sesuai project ID Firestore-mu
+        $projectId = 'career-apps'; 
         $url = "https://firestore.googleapis.com/v1/projects/{$projectId}/databases/(default)/documents/{$path}";
 
         $response = Http::withToken($token)->get($url);

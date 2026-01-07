@@ -21,7 +21,6 @@
 <main class="pt-20 px-10 lg:px-16">
     <div class="bg-white rounded-2xl shadow-xl flex flex-col lg:flex-row items-stretch overflow-hidden mb-4">
 
-        <!-- LEFT (IMAGE TETAP ADA) -->
         <div class="lg:w-1/2 p-8 lg:p-16 flex flex-col items-center">
             <div class="w-1/2 max-w-xs sm:max-w-sm md:max-w-md aspect-auto relative overflow-hidden">
                 <img src="{{ asset('images/login-main.png') }}" 
@@ -42,11 +41,9 @@
             </div>
         </div>
 
-        <!-- RIGHT -->
         <div class="lg:w-1/2 p-8 lg:p-16 flex flex-col items-center gap-4">
             <h2 class="text-3xl font-extrabold text-blue-900">Masuk</h2>
 
-            {{-- VALIDASI KOSONG --}}
             @if ($errors->any())
                 <div class="w-full p-3 rounded-lg bg-red-100 text-red-700 text-sm">
                     @foreach ($errors->all() as $error)
@@ -55,7 +52,6 @@
                 </div>
             @endif
 
-            {{-- LOGIN GAGAL --}}
             @if (session('error'))
                 <div class="w-full p-3 rounded-lg bg-red-100 text-red-700 text-sm">
                     {{ session('error') }}
@@ -99,7 +95,6 @@
                 </button>
             </form>
 
-            <!-- LUPA PASSWORD -->
             <button 
                 class="text-center text-blue-900 hover:underline"
                 @click="showModal = true"
@@ -110,7 +105,6 @@
     </div>
 </main>
 
-<!-- MODAL KONFIRMASI -->
 <div 
     x-show="showModal"
     x-transition

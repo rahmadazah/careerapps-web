@@ -15,7 +15,6 @@ class PengelolaAutentikasi extends Controller
 
     public function masuk(Request $request)
     {
-        // 1. VALIDASI INPUT KOSONG
         $request->validate(
             [
                 'email' => 'required',
@@ -27,7 +26,6 @@ class PengelolaAutentikasi extends Controller
             ]
         );
 
-        // 2. PROSES LOGIN KE API
         $token = Mahasiswa::login($request->email, $request->password);
 
         if ($token) {
@@ -35,7 +33,6 @@ class PengelolaAutentikasi extends Controller
             return redirect()->route('dashboard')->with('success', 'Login berhasil!');
         }
 
-        // 3. EMAIL / PASSWORD SALAH
         return redirect()->back()->with('error', 'Email atau password salah.');
     }
 

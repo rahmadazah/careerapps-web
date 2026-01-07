@@ -86,14 +86,12 @@
         </button>
     </div>
 
-    <!-- FOTO PROFIL -->
     <div class="flex justify-center items-center gap-5 mt-4">
         <div class="w-48 h-48 rounded-full flex justify-center items-center relative">
             <img class="w-full rounded-full object-cover" src="{{ $profile['fotoProfil'] }}" alt="Profil">
         </div>
     </div>
 
-    <!-- DATA PROFIL -->
     <div class="w-full flex flex-col items-start gap-4 mt-4">
         <div class="w-full p-3 bg-white rounded-lg border border-gray-200">
             <div class="text-[#073B60] font-bold">Nama</div>
@@ -126,7 +124,6 @@
         </div>
     </div>
 
-    <!-- BUTTON KELUAR -->
     <div class="mt-6 w-full">
         <button 
             class="w-full bg-[#F73939] rounded-lg p-3 text-white text-base font-normal"
